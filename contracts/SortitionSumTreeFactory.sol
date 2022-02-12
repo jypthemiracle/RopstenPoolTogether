@@ -71,6 +71,17 @@ library SortitionSumTreeFactory {
         }
     }
 
+    function stakeOf(SortitionSumTrees storage self, bytes32 _key, bytes32 _ID) public view returns (uint value) {
+        SortitionSumTree storage tree = self.sortitionSumTrees[_key];
+        uint treeIndex = tree.IDsToNodeIndexes[_ID];
+
+        if (treeIndex == 0) {
+            value = 0;
+        } else {
+            value = tree.nodes[treeIndex];
+        }
+    }
+
     function pickWinner(SortitionSumTrees storage self, bytes32 _key, uint drawnNumber) public view returns (bytes32) {
         return draw(self, _key, drawnNumber);
     }
