@@ -68,6 +68,29 @@ library SortitionSumTreeFactory {
             tree.IDsToNodeIndexes[_ID] = treeIndex;
             tree.nodeIndexesToIds[treeIndex] = _ID;
             updateParents(self, _key, treeIndex, true, _value);
+        } else {
+             if (_value == 0) { // Zero value.
+                // Remove.
+                // Remember value and set to 0.
+                uint value = tree.nodes[treeIndex];
+                tree.nodes[treeIndex] = 0;
+
+                // Push to stack.
+                tree.stack.push(treeIndex);
+
+                // Clear label.
+                delete tree.IDsToNodeIndexes[_ID];
+                delete tree.nodeIndexesToIDs[treeIndex];
+
+                updateParents(self, _key, treeIndex, false, value);
+            } else if (_value != tree.nodes[treeIndex]) { // New, non zero value.
+                // Set.
+                bool plusOrMinus = tree.nodes[treeIndex] <= _value;
+                uint plusOrMinusValue = plusOrMinus ? _value - tree.nodes[treeIndex] : tree.nodes[treeIndex] - _value;
+                tree.nodes[treeIndex] = _value;
+
+                updateParents(self, _key, treeIndex, plusOrMinus, plusOrMinusValue);
+            }
         }
     }
 
