@@ -78,7 +78,7 @@ contract("BasePool-SumTree", ([_, _user1, _user2, _user3, _user4, _user5]) => {
         let result = tx.receipt.status;
 
         if (tx.logs !== undefined && tx.logs.length > 0) {
-            console.log("AAA", tx.receipt.status);
+            console.log("AAA", tx.receipt);
             tx.logs.forEach((log) => {
                 if (log.event === "Rewarded") {
                     console.log(`Winner is ${log.args.winner.toString()}, Reward is ${log.args.netWinnings}`);

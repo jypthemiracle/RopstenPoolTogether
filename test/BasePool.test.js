@@ -45,7 +45,7 @@ contract ("BasePool", function([_, _user1, _user2, _user3]) {
         expect(drawId.eq(new BN(1))).to.be.true;
     });
     
-    it.skip ("should revert when opening another draw", async () => {
+    it ("should revert when opening another draw", async () => {
         await expectRevert(
             this.instance.openDraw(constants.SECRET_HASH, {from: _}),
             "There is an open draw already",
@@ -53,20 +53,22 @@ contract ("BasePool", function([_, _user1, _user2, _user3]) {
     });
     
     it ("should supply cToken to Compound pool", async () => {
-
+        // console.log("ADDR", this.instance.address); 
         let balanceDAI = await this.daiContract.methods.balanceOf(constants.ROY).call();
         let balanceCDAI = await this.cDaiContract.methods.balanceOf(this.instance.address).call();
         // console.log("TTT", balanceDAI, balanceCDAI);
         
         const amount = TICKET_PRICE_3;
+        // console.log("THIS DAI", this.daiContract.methods.approve)
+        // console.log("AMOUNT", amount.toString())
         const tx = await this.daiContract.methods.approve(this.instance.address, amount.toString()).send({from: constants.ROY});
-        // console.log("TTT", tx.receipt.status);
+        // console.log("TTT TX", tx);
         
         const receipt = await this.instance.buyTicket(amount.toString(), {from: constants.ROY});
         balanceCDAI = (await this.cDaiContract.methods.balanceOf(this.instance.address).call());
         
         expect(new BN(balanceCDAI).gt(new BN(0)), "failed to mint cDAI for the contract").to.be.true;
-        //expectEvent(receipt, "Deposited", {sender: constants.ROY, amount: amount.toString()});
+        expectEvent(receipt, "Deposited", {sender: constants.ROY, amount: amount.toString()});
         
     });
     
@@ -109,7 +111,7 @@ contract ("BasePool", function([_, _user1, _user2, _user3]) {
         assert.equal(result, true, "Failed to pick a winner");
     });
     
-    it.skip ("Dai balance of the contract", async () => {
+    it ("Dai balance of the contract", async () => {
         const accountedBalance = await this.instance.accountedBalance();
         console.log(web3.utils.fromWei(new BN(accountedBalance), "ether"));
         assert.equal(accountedBalance, accountedBalance, "DAI balance of the contract");
@@ -144,7 +146,7 @@ contract ("BasePool", function([_, _user1, _user2, _user3]) {
         });
     });
     
-    it.skip ("should maintain the past records of the draw", async () => {
+    it ("should maintain the past records of the draw", async () => {
         const remaining = await this.instance.getBalanceOfDrawTreeById(1, constants.ROY);
         console.log(remaining.toString());
         assert.equal(1, 1, "OK");
